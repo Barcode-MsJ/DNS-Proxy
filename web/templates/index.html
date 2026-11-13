@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1220">
+  <title>DNS Proxy | داشبورد مدیریت</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">DNS</div>
+        <div><strong>DNS Proxy</strong><span>Smart Resolver</span></div>
+      </div>
+      <div class="side-label">مدیریت سامانه</div>
+      <a class="nav-link active" href="#overview"><span>▦</span> نمای کلی</a>
+      <a class="nav-link" href="#lookup"><span>⌕</span> استعلام دامنه</a>
+      <a class="nav-link" href="#cache"><span>◫</span> حافظه کش</a>
+      <a class="nav-link" href="#lists"><span>☷</span> فهرست دامنه‌ها</a>
+      <a class="nav-link" href="#logs"><span>≋</span> گزارش درخواست‌ها</a>
+      <div class="sidebar-bottom">
+        <div class="connection-card"><i class="pulse"></i><div><b>وضعیت سرویس</b><small id="side-status">در حال بررسی...</small></div></div>
+        <small class="version">فاز اول · Computer Networks</small>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div><div class="eyebrow">NETWORK SERVICES / PHASE 01</div><h1>داشبورد DNS Proxy</h1><p>مدیریت هوشمند درخواست‌های DNS، فهرست‌ها و حافظه محلی</p></div>
+        <div class="top-actions"><span class="status-pill"><i class="pulse"></i><span id="status-label">آنلاین</span></span><button class="icon-button" id="refresh-btn" title="به‌روزرسانی">↻</button></div>
+      </header>
+
+      <section id="overview" class="stats-grid">
+        <article class="stat-card"><div class="stat-top"><span>کل درخواست‌ها</span><span class="stat-icon blue">Σ</span></div><strong id="stat-total">0</strong><small>درخواست پردازش‌شده</small></article>
+        <article class="stat-card"><div class="stat-top"><span>مسدودسازی تبلیغات</span><span class="stat-icon red">⊘</span></div><strong id="stat-ads">0</strong><small>AD_BLOCK</small></article>
+        <article class="stat-card"><div class="stat-top"><span>دامنه‌های تحریم</span><span class="stat-icon amber">⌁</span></div><strong id="stat-sanctions">0</strong><small>SANCTION</small></article>
+        <article class="stat-card"><div class="stat-top"><span>پاسخ از کش</span><span class="stat-icon green">◫</span></div><strong id="stat-cache">0</strong><small>CACHE HIT</small></article>
+      </section>
+
+      <section class="content-grid">
+        <article class="panel lookup-panel" id="lookup">
+          <div class="panel-heading"><div><span class="section-kicker">DOMAIN RESOLUTION</span><h2>استعلام نام دامنه</h2><p>نام دامنه را وارد کنید تا موتور تصمیم‌گیری آن را بررسی کند.</p></div><span class="round-icon">⌕</span></div>
+          <form id="lookup-form" class="lookup-form">
+            <label for="domain-input">نام دامنه</label>
+            <div class="input-row"><input id="domain-input" name="domain" type="text" placeholder="مثلاً google.com" autocomplete="off" spellcheck="false" required><button type="submit" id="resolve-btn">بررسی دامنه <span>←</span></button></div>
+          </form>
+          <div id="result-card" class="result-card empty-state"><div class="empty-symbol">⌁</div><div><b>آماده دریافت درخواست</b><span>نتیجه استعلام در این قسمت نمایش داده می‌شود.</span></div></div>
+        </article>
+
+        <article class="panel system-panel">
+          <div class="panel-heading"><div><span class="section-kicker">SYSTEM CONFIGURATION</span><h2>وضعیت سامانه</h2><p>خلاصه تنظیمات فعال موتور DNS Proxy</p></div><span class="round-icon">⚙</span></div>
+          <div class="system-list">
+            <div><span>حالت اجرا</span><b id="mode-value">—</b></div>
+            <div><span>Upstream</span><b class="mono" id="upstream-value">—</b></div>
+            <div><span>حافظه کش</span><b id="cache-enabled-value">—</b></div>
+            <div><span>TTL محلی</span><b class="mono" id="local-ttl-value">—</b></div>
+            <div><span>دامنه‌های تبلیغاتی</span><b id="ad-count-value">—</b></div>
+            <div><span>دامنه‌های تحریم</span><b id="sanction-count-value">—</b></div>
+          </div>
+          <button class="secondary-button full-width" id="reload-btn">بارگذاری مجدد فهرست‌ها <span>↻</span></button>
+          <div id="reload-message" class="inline-message" aria-live="polite"></div>
+        </article>
+      </section>
+
+      <section class="content-grid lower-grid">
+        <article class="panel" id="cache">
+          <div class="panel-heading compact"><div><span class="section-kicker">LOCAL DNS CACHE</span><h2>محتوای حافظه کش</h2></div><span class="count-badge" id="cache-count">0 مورد</span></div>
+          <div class="table-wrap"><table><thead><tr><th>دامنه</th><th>آدرس IP</th><th>TTL باقی‌مانده</th></tr></thead><tbody id="cache-body"><tr><td colspan="3" class="table-empty">کش خالی است.</td></tr></tbody></table></div>
+        </article>
+        <article class="panel" id="lists">
+          <div class="panel-heading compact"><div><span class="section-kicker">DOMAIN POLICIES</span><h2>فهرست‌های دامنه</h2></div><span class="count-badge">فهرست فعال</span></div>
+          <div class="list-columns"><div><div class="list-title"><i class="dot red-dot"></i> تبلیغاتی <b id="ads-list-count">0</b></div><ul id="ads-list" class="domain-list"><li>—</li></ul></div><div><div class="list-title"><i class="dot amber-dot"></i> تحریم <b id="sanctions-list-count">0</b></div><ul id="sanctions-list" class="domain-list"><li>—</li></ul></div></div>
+        </article>
+      </section>
+
+      <section class="panel logs-panel" id="logs">
+        <div class="panel-heading compact"><div><span class="section-kicker">REQUEST ACTIVITY</span><h2>آخرین درخواست‌ها</h2></div><span class="count-badge">LOG.TXT</span></div>
+        <div class="table-wrap"><table><thead><tr><th>زمان</th><th>دامنه</th><th>منبع</th><th>وضعیت</th><th>IP</th><th>TTL</th></tr></thead><tbody id="logs-body"><tr><td colspan="6" class="table-empty">هنوز گزارشی ثبت نشده است.</td></tr></tbody></table></div>
+      </section>
+      <footer><span>DNS Proxy · Computer Networks Project · Phase 1</span><span>رابط وب محلی · موتور مشترک Python</span></footer>
+    </main>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="/app.js"></script>
+</body>
+</html>
