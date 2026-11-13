@@ -1,0 +1,164 @@
+DNS PROXY — ACCEPTANCE TEST TRANSCRIPT
+Source: Phase 1 assignment PDF, tests T1–T13
+Note: TTL progression is controlled with a deterministic test clock; UDP packets are real localhost datagrams.
+==============================================================================
+
+T1–T12 — one fresh run, required order
+Acceptance assertions: PASS (15 domain results; 5 UDP requests; TTL/cache/expiry/timeout verified).
+DNS Proxy ready.
+Enter domain (or exit): ads.example.com
+Domain : ads.example.com
+Source : AD_BLOCK
+Status : OK
+IP : 0.0.0.0
+TTL : 60
+
+Enter domain (or exit): sub.ads.example.com
+Domain : sub.ads.example.com
+Source : AD_BLOCK
+Status : OK
+IP : 0.0.0.0
+TTL : 60
+
+Enter domain (or exit): ADS.Example.COM.
+Domain : ads.example.com
+Source : AD_BLOCK
+Status : OK
+IP : 0.0.0.0
+TTL : 60
+
+Enter domain (or exit): notads.example.com
+Domain : notads.example.com
+Source : UPSTREAM
+Status : OK
+IP : 198.51.100.7
+TTL : 5
+
+Enter domain (or exit): service.example.org
+Domain : service.example.org
+Source : SANCTION
+Status : OK
+IP : 192.0.2.10
+TTL : 60
+
+Enter domain (or exit): both.example.com
+Domain : both.example.com
+Source : AD_BLOCK
+Status : OK
+IP : 0.0.0.0
+TTL : 60
+
+Enter domain (or exit): normal.example.net
+Domain : normal.example.net
+Source : UPSTREAM
+Status : OK
+IP : 198.51.100.7
+TTL : 5
+
+Enter domain (or exit): normal.example.net
+Domain : normal.example.net
+Source : CACHE
+Status : OK
+IP : 198.51.100.7
+TTL : 3
+
+Enter domain (or exit): normal.example.net
+Domain : normal.example.net
+Source : UPSTREAM
+Status : OK
+IP : 198.51.100.7
+TTL : 5
+
+Enter domain (or exit): missing.example.net
+Domain : missing.example.net
+Source : UPSTREAM
+Status : NOT_FOUND
+IP : -
+TTL : -
+
+Enter domain (or exit): missing.example.net
+Domain : missing.example.net
+Source : UPSTREAM
+Status : NOT_FOUND
+IP : -
+TTL : -
+
+Enter domain (or exit): other.example.net
+Domain : other.example.net
+Source : UPSTREAM
+Status : SERVER_ERROR
+IP : -
+TTL : -
+
+Enter domain (or exit): ads.example.com
+Domain : ads.example.com
+Source : AD_BLOCK
+Status : OK
+IP : 0.0.0.0
+TTL : 60
+
+Enter domain (or exit): 
+Domain : (empty)
+Source : NONE
+Status : INVALID_INPUT
+IP : -
+TTL : -
+
+Enter domain (or exit): bad domain.com
+Domain : bad domain.com
+Source : NONE
+Status : INVALID_INPUT
+IP : -
+TTL : -
+
+Enter domain (or exit): exit
+Bye.
+
+Upstream simulator received:
+Request #1: notads.example.com -> OK 198.51.100.7 5
+Request #2: normal.example.net -> OK 198.51.100.7 5
+Request #3: normal.example.net -> OK 198.51.100.7 5
+Request #4: missing.example.net -> NOT_FOUND
+Request #5: missing.example.net -> NOT_FOUND
+Verified upstream datagrams: 5
+
+T13 — changed config: sinkhole_ip=10.0.0.1, cache_enabled=false
+Acceptance assertions: PASS (custom sinkhole IP and two upstream requests with cache disabled).
+DNS Proxy ready.
+Enter domain (or exit): ads.example.com
+Domain : ads.example.com
+Source : AD_BLOCK
+Status : OK
+IP : 10.0.0.1
+TTL : 60
+
+Enter domain (or exit): normal.example.net
+Domain : normal.example.net
+Source : UPSTREAM
+Status : OK
+IP : 198.51.100.7
+TTL : 5
+
+Enter domain (or exit): normal.example.net
+Domain : normal.example.net
+Source : UPSTREAM
+Status : OK
+IP : 198.51.100.7
+TTL : 5
+
+Enter domain (or exit): exit
+Bye.
+
+Upstream simulator received (two normal lookups prove cache is disabled):
+Request #1: normal.example.net -> OK 198.51.100.7 5
+Request #2: normal.example.net -> OK 198.51.100.7 5
+Verified upstream datagrams: 2
+
+Bonus feature verification (B1–B6)
+B1: Statistics counters are exercised by the unit/integration test suite.
+B2: Reload reads both list files again; covered by test_reload_lists_updates_policy_without_restart.
+B3: Cache command/API returns only live entries with remaining TTL; covered by cache tests.
+B4: log.txt appends timestamp | domain | source | status | IP | TTL; covered by log tests.
+B5: FIFO eviction at cache_max_entries=2; covered by test_fifo_cache_limit_and_disabled_cache.
+B6: Real DNS A/TTL extraction and NXDOMAIN mapping are tested with deterministic DNS wire-response fixtures.
+B6 live public DNS: UDP/53 probes to both 8.8.8.8 and 1.1.1.1 timed out in this execution environment; no live resolver result is claimed.
